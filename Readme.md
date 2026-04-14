@@ -1,0 +1,2 @@
+# Swordbot character mod for risk of rain 2 [WIP]
+Excuse the folder names, this is obviously based off of the Henry template and changing the folder names would require me to change the export automation and I'm just sooo lazy. Will do so when the mod is done.

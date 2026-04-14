@@ -1,0 +1,83 @@
+ManifestFileVersion: 0
+CRC: 3660097238
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 6ac25870d4c8d2070c93ae360e252c1e
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 41b3b1771810322a3c3edb451b8b2565
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 261c50d8a80898e4ebf2e8e415ea6766, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a63dc2c00bc45234bab375db0c723d96, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 136
+  Script: {instanceID: 0}
+- Class: 137
+  Script: {instanceID: 0}
+- Class: 198
+  Script: {instanceID: 0}
+- Class: 199
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Assembly-CSharp
+  ClassName: ChildLocator/NameTransformPair
+Assets:
+- Assets/Bundle/texPassiveIcon.png
+- Assets/Bundle/texVergilAchievement.png
+- Assets/Bundle/texDanteAchievement.png
+- Assets/Bundle/texBazookaOutIcon.png
+- Assets/Bundle/texMasteryAchievement.png
+- Assets/Bundle/texShotgunIcon.png
+- Assets/Bundle/texBoxingGlovesIcon.png
+- Assets/Bundle/SwordbotMat.mat
+- Assets/Bundle/Static.prefab
+- Assets/Bundle/texStingerIcon.png
+- Assets/Bundle/texBazookaIconScepter.png
+- Assets/Bundle/SwordMaterial.mat
+- Assets/Bundle/texGrandMasteryAchievement.png
+- Assets/HenryAssets/HenryBundle/Animation/swordbotClips/Land.anim
+- Assets/Bundle/texMainSkin.png
+- Assets/Bundle/texUziIcon.png
+- Assets/Bundle/texHenryAchievement.png
+- Assets/Bundle/Explosion.prefab
+- Assets/Bundle/texBazookaIcon.png
+- Assets/Bundle/mdlSwordbotBackup.prefab
+- Assets/Bundle/texPistolIcon.png
+- Assets/Bundle/texPrimaryIcon.png
+- Assets/Bundle/texUtilityIcon.png
+- Assets/Bundle/SwordbotDisplay.prefab
+- Assets/Bundle/texHenryIcon.png
+- Assets/Bundle/texScepterSpecialIcon.png
+- Assets/Bundle/mdlSwordbot.prefab
+- Assets/Bundle/SwordbotDisplayBackup.prefab
+- Assets/Bundle/texSecondaryIcon.png
+- Assets/Bundle/texBazookaFireIcon.png
+- Assets/Bundle/texSpecialIcon.png
+Dependencies: []
