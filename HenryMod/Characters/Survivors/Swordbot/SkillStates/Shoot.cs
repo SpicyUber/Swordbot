@@ -12,7 +12,7 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
         public static float procCoefficient = 1f;
         public static float baseDuration = 0.6f;
         //delay on firing is usually ass-feeling. only set this if you know what you're doing
-        public static float firePercentTime = 0.1f;
+        public static float firePercentTime = 0.4f;
         public static float force = 800f;
         public static float recoil = 3f;
         public static float range = 256f;

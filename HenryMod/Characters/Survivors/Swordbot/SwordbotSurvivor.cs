@@ -61,7 +61,8 @@ namespace Swordbot.Survivors.Swordbot
                 new CustomRendererInfo
                 {
                     childName = "body",
-                  //  material = assetBundle.LoadMaterial("matHenry"),
+                  material = assetBundle.LoadMaterial("Body Material")
+
                 },
                 new CustomRendererInfo
                 {

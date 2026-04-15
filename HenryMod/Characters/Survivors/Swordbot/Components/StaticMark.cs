@@ -73,7 +73,7 @@ namespace SwordbotMod.Characters.Survivors.Swordbot.Components
                     Debug.Log("parent parent:"+component.ToString());
                 }*/
                 CharacterModel cm = target.parent.GetComponentInParent<RoR2.CharacterModel>();
-                if (cm!=null&& !cm.enabled) staticParticles.Stop();            
+                if (cm==null|| !cm.enabled) staticParticles.Stop();            
                 transform.position = target.position;
             
             }

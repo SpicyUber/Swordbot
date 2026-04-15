@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3660097238
+CRC: 1272978682
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 6ac25870d4c8d2070c93ae360e252c1e
+    Hash: 82c770f798146de20a2eff1e432b2b0e
   TypeTreeHash:
     serializedVersion: 2
     Hash: 41b3b1771810322a3c3edb451b8b2565
@@ -49,35 +49,37 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: Assembly-CSharp
   ClassName: ChildLocator/NameTransformPair
 Assets:
-- Assets/Bundle/texPassiveIcon.png
 - Assets/Bundle/texVergilAchievement.png
 - Assets/Bundle/texDanteAchievement.png
 - Assets/Bundle/texBazookaOutIcon.png
 - Assets/Bundle/texMasteryAchievement.png
+- Assets/Bundle/texPassiveIcon.png
 - Assets/Bundle/texShotgunIcon.png
 - Assets/Bundle/texBoxingGlovesIcon.png
+- Assets/Bundle/texPrimaryIcon.png
 - Assets/Bundle/SwordbotMat.mat
 - Assets/Bundle/Static.prefab
+- Assets/HenryAssets/HenryBundle/Animation/clips/AirSlash1.anim
 - Assets/Bundle/texStingerIcon.png
 - Assets/Bundle/texBazookaIconScepter.png
 - Assets/Bundle/SwordMaterial.mat
 - Assets/Bundle/texGrandMasteryAchievement.png
+- Assets/Bundle/texSpecialIcon.png
 - Assets/HenryAssets/HenryBundle/Animation/swordbotClips/Land.anim
 - Assets/Bundle/texMainSkin.png
+- Assets/Bundle/texSecondaryIcon.png
+- Assets/Bundle/mdlSwordbot.prefab
 - Assets/Bundle/texUziIcon.png
 - Assets/Bundle/texHenryAchievement.png
+- Assets/Bundle/Body Material.mat
+- Assets/Bundle/SwordbotDisplay.prefab
 - Assets/Bundle/Explosion.prefab
 - Assets/Bundle/texBazookaIcon.png
-- Assets/Bundle/mdlSwordbotBackup.prefab
 - Assets/Bundle/texPistolIcon.png
-- Assets/Bundle/texPrimaryIcon.png
 - Assets/Bundle/texUtilityIcon.png
-- Assets/Bundle/SwordbotDisplay.prefab
+- Assets/Bundle/SwordbotDisplayBackup.prefab
 - Assets/Bundle/texHenryIcon.png
 - Assets/Bundle/texScepterSpecialIcon.png
-- Assets/Bundle/mdlSwordbot.prefab
-- Assets/Bundle/SwordbotDisplayBackup.prefab
-- Assets/Bundle/texSecondaryIcon.png
+- Assets/Bundle/mdlSwordbotBackup.prefab
 - Assets/Bundle/texBazookaFireIcon.png
-- Assets/Bundle/texSpecialIcon.png
 Dependencies: []

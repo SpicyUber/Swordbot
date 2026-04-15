@@ -38,7 +38,7 @@ namespace Swordbot.Survivors.Swordbot.Components
 
             _t += Time.deltaTime;
             if( _t >= 1f ) {_t= 0;
-                for (int i =staticMarks.Count-1;i>=0;i--) { StaticMark mark = staticMarks[i]; mark.timeToLive--; if(mark.TryDestroy())staticMarks.Remove(mark); }
+                for (int i =staticMarks.Count-1;i>=0;i--) { StaticMark mark = staticMarks[i]; if (mark == null) { staticMarks.RemoveAt(i); continue; }    mark.timeToLive--; if(mark.TryDestroy())staticMarks.Remove(mark); }
             }
         }
 
@@ -46,7 +46,7 @@ namespace Swordbot.Survivors.Swordbot.Components
         {
             for (int i = staticMarks.Count - 1; i >= 0; i--)
             {
-             StaticMark mark = staticMarks[i]; mark.timeToLive--; mark.Consume(gameObject,team, damage); staticMarks.Remove(mark);
+             StaticMark mark = staticMarks[i]; mark.timeToLive--; mark.Consume(gameObject,team, damage);  staticMarks.Remove(mark);
 
                
 

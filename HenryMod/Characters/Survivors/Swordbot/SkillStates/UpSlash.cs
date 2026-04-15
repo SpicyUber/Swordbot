@@ -54,7 +54,7 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
             swingSoundString = $"Play_special";//"HenrySwordSwing"
             hitSoundString = $"Play_specialHit";
 
-            midAttackDuration = 0.4f;
+            midAttackDuration = 0.38f;
             applyMidAttackInterval  = 0.2f;
             applyMidAttackTimer = applyMidAttackInterval;
            
@@ -134,14 +134,23 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
 
         protected void PunchAllEnemiesUp()
         {
-            foreach (HealthComponent enemy in hitEnemies)
+            for (int i=0;i< hitEnemies.Count;i++)
             {
-                if (enemy == null || characterBody == null || Vector3.Distance(enemy.transform.position, characterBody.transform.position) > upSlashMidAttackRange) continue;
+                var enemy = hitEnemies[i];
+                var characterToEnemyFlattened = (enemy.transform.position - characterBody.transform.position);
+                characterToEnemyFlattened.y = 0;
+                characterToEnemyFlattened.Normalize();
+                var aimDirectionFlattened = characterBody.inputBank.aimDirection;
+                aimDirectionFlattened.y = 0;
+                aimDirectionFlattened.Normalize();
+                if (Vector3.Dot((enemy.transform.position - characterBody.transform.position).normalized, characterBody.inputBank.aimDirection) < 0) { hitEnemies.RemoveAt(i); i--; continue; }
+                if ( enemy == null || enemy.body.isBoss || enemy.body.isBoss || characterBody == null || Vector3.Distance(enemy.transform.position, characterBody.transform.position) > upSlashMidAttackRange) continue;
                 Vector3 dir = characterBody.inputBank.aimDirection;
                 dir.y = 0; dir.Normalize();
-                midAttackForce = (characterBody.transform.position - enemy.transform.position) + dir * 6f + Vector3.up * Mathf.Max(0,((midAttackDuration-stopwatch)/midAttackDuration))* 35f* upDirectionNumber* ((upDirectionNumber < 0) ? 3 : 1);
-                Debug.Log("ATTEMPTING PUNCH UP ENEMY!" + enemy.name);
+                midAttackForce = ((characterBody.transform.position - enemy.transform.position) + 2*dir) + Vector3.up * Mathf.Max(0,((midAttackDuration-stopwatch)/midAttackDuration))* 35f* upDirectionNumber* ((upDirectionNumber < 0) ? 3 : 1);
                 
+                Debug.Log("ATTEMPTING PUNCH UP ENEMY!" + enemy.name);
+                 
                 enemy.TakeDamage(new DamageInfo() {attacker=gameObject, inflictor = gameObject, procCoefficient = 1, damageType = damageType, damage = attack.damage, position = characterBody.transform.position, force = midAttackForce, physForceFlags = PhysForceFlags.massIsOne, canRejectForce = false });
                 Util.PlaySound(hitSoundString, enemy.gameObject);
 

@@ -14,10 +14,14 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
         float swingMovementSpeed = 1f;
         float slashingStopwatch;
         float slashDashSpeed = 2f;
+        string airbornePrefix => (characterMotor.isGrounded) ? "" : "Air";
+         
+
+       
         public override void OnEnter()
         {
             if (characterMotor.isGrounded) PreviousStateTracker.PreviousState = null;
-
+            if (characterMotor && !characterMotor.isGrounded) swingIndex = swingIndex % 2;           
             
 
             hitboxGroupName = "SwordGroup";
@@ -51,6 +55,14 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
             attackRecoil = 0.5f;
             hitHopVelocity = 12f;
 
+            if (characterMotor.isGrounded) {
+                hitStopDuration = 0f;
+                attackRecoil = 0.5f;
+                hitHopVelocity = 1f;
+                physFlags = PhysForceFlags.massIsOne;
+                bonusForce = Vector3.zero;
+                pushForce = 10f;
+            }
             
 
             swingSoundString = $"Play_swing{swingIndex}";//"HenrySwordSwing"
@@ -69,6 +81,7 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
 
         public override void FixedUpdate()
         {
+            
             slashingStopwatch += Time.fixedDeltaTime;
             if (/* PreviousStateTracker.PreviousState != null && PreviousStateTracker.PreviousState == typeof(  UpSlash)*/!characterMotor.isGrounded) { }
             else
@@ -81,13 +94,14 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
 
 
                 base.FixedUpdate();
+            if (characterMotor && !characterMotor.isGrounded) swingIndex = swingIndex % 2;
         }
     
        
 
         protected override void PlayAttackAnimation()
         {
-           PlayAnimation("Gesture, Override", "Slash" + (1 + swingIndex), playbackRateParam, duration, 0);
+           PlayAnimation("Gesture, Override", airbornePrefix+"Slash" + (1 + swingIndex), playbackRateParam, duration, 0);
         }
 
         protected override void PlaySwingEffect()

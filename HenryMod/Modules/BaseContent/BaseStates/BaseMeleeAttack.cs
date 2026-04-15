@@ -239,7 +239,9 @@ namespace Swordbot.Modules.BaseStates
 
         public void SetStep(int i)
         {
+            
             swingIndex = i;
+             
         }
     }
 }
