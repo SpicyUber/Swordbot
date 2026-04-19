@@ -1,76 +1,76 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &6203312694562349370
+--- !u!1001 &6742726247851776992
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1477046031236016412, guid: 538548dd1cee17f4193297f7e35853c2,
-        type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: 4397b394b0996d44ba60f0f7769a33d1, type: 2}
-    - target: {fileID: 7386503638142080064, guid: 538548dd1cee17f4193297f7e35853c2,
-        type: 3}
-      propertyPath: m_Name
-      value: SwordbotDisplay
-      objectReference: {fileID: 0}
-    - target: {fileID: 7911119481679023866, guid: 538548dd1cee17f4193297f7e35853c2,
+    - target: {fileID: 3855287212351518374, guid: f3173fe39b5f6634f88228e55b7515a9,
         type: 3}
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7911119481679023866, guid: 538548dd1cee17f4193297f7e35853c2,
+    - target: {fileID: 3855287212351518374, guid: f3173fe39b5f6634f88228e55b7515a9,
         type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7911119481679023866, guid: 538548dd1cee17f4193297f7e35853c2,
+    - target: {fileID: 3855287212351518374, guid: f3173fe39b5f6634f88228e55b7515a9,
         type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7911119481679023866, guid: 538548dd1cee17f4193297f7e35853c2,
+    - target: {fileID: 3855287212351518374, guid: f3173fe39b5f6634f88228e55b7515a9,
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7911119481679023866, guid: 538548dd1cee17f4193297f7e35853c2,
+    - target: {fileID: 3855287212351518374, guid: f3173fe39b5f6634f88228e55b7515a9,
         type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7911119481679023866, guid: 538548dd1cee17f4193297f7e35853c2,
+    - target: {fileID: 3855287212351518374, guid: f3173fe39b5f6634f88228e55b7515a9,
         type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7911119481679023866, guid: 538548dd1cee17f4193297f7e35853c2,
+    - target: {fileID: 3855287212351518374, guid: f3173fe39b5f6634f88228e55b7515a9,
         type: 3}
       propertyPath: m_LocalRotation.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7911119481679023866, guid: 538548dd1cee17f4193297f7e35853c2,
+    - target: {fileID: 3855287212351518374, guid: f3173fe39b5f6634f88228e55b7515a9,
         type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7911119481679023866, guid: 538548dd1cee17f4193297f7e35853c2,
+    - target: {fileID: 3855287212351518374, guid: f3173fe39b5f6634f88228e55b7515a9,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7911119481679023866, guid: 538548dd1cee17f4193297f7e35853c2,
+    - target: {fileID: 3855287212351518374, guid: f3173fe39b5f6634f88228e55b7515a9,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7911119481679023866, guid: 538548dd1cee17f4193297f7e35853c2,
+    - target: {fileID: 3855287212351518374, guid: f3173fe39b5f6634f88228e55b7515a9,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4513031217537221531, guid: f3173fe39b5f6634f88228e55b7515a9,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 4397b394b0996d44ba60f0f7769a33d1, type: 2}
+    - target: {fileID: 4524828892751539228, guid: f3173fe39b5f6634f88228e55b7515a9,
+        type: 3}
+      propertyPath: m_Name
+      value: SwordbotDisplay
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 538548dd1cee17f4193297f7e35853c2, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: f3173fe39b5f6634f88228e55b7515a9, type: 3}

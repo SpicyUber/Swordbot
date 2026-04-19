@@ -21,26 +21,47 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
         public override void OnEnter()
         {
             if (characterMotor.isGrounded) PreviousStateTracker.PreviousState = null;
-            if (characterMotor && !characterMotor.isGrounded) swingIndex = swingIndex % 2;           
-            
-
+            if (characterMotor && !characterMotor.isGrounded) swingIndex = swingIndex % 2;
+            bool isAir = !characterMotor.isGrounded;
+            Debug.Log("FART2"+isAir);
             hitboxGroupName = "SwordGroup";
             hitEnemies = new List<HealthComponent>();
             damageType = DamageTypeCombo.GenericPrimary;
             damageCoefficient = SwordbotStaticValues.swordDamageCoefficient;
             procCoefficient = 1f;
-            pushForce =(swingIndex>0)?  25f:-50f;
-            float upForce = 50f;
-            if (!characterBody.characterMotor.isGrounded) { pushForce = 0f; upForce = 150f; }
+            if (isAir)
+            {
+                pushForce = 0f;
+                
+                bonusForce =
+                    Vector3.zero;
+                hitStopDuration = 0.1f;
+                attackRecoil = 0.5f;
+                hitHopVelocity = 12f;
+                physFlags = PhysForceFlags.massIsOne;
+                
+            }
+            else
+            {
+                pushForce = 50f;
+                float upForce = 5f;
+                hitStopDuration = 0.1f;
+                attackRecoil = 0.5f;
+                hitHopVelocity = 0f;
+
+              
+                physFlags = PhysForceFlags.resetVelocity| PhysForceFlags.ignoreGroundStick;
+
+                bonusForce = (Vector3.up*(1.5f-0.5f*((swingIndex)/2)) +base.characterBody.inputBank.aimDirection).normalized * (4000f * ((swingIndex == 2) ? 1 : 0.3f));
+                Debug.Log(base.characterBody.inputBank.aimDirection + "BF");
+                
+            }
             slashingStopwatch = 0;
-           
-            bonusForce =Vector3.up*upForce+ (base.characterBody.inputBank.aimDirection+ Vector3.up)*(4000f*((swingIndex==2)?1:0.001f));
-
-            Debug.Log("si:"+swingIndex);
-            
-
+            Debug.Log("si:" + swingIndex);
             baseDuration = 1.734f;
-            duration = baseDuration / Mathf.Sqrt(attackSpeedStat);
+            
+           
+            
             //0-1 multiplier of baseduration, used to time when the hitbox is out (usually based on the run time of the animation)
             //for example, if attackStartPercentTime is 0.5, the attack will start hitting halfway through the ability. if baseduration is 3 seconds, the attack will start happening at 1.5 seconds
             attackStartPercentTime = 0.12f;
@@ -49,20 +70,11 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
             //this is the point at which the attack can be interrupted by itself, continuing a combo
             earlyExitPercentTime = 0.48f;
             
-            physFlags = PhysForceFlags.ignoreGroundStick;
+            
 
-            hitStopDuration = 0.1f;
-            attackRecoil = 0.5f;
-            hitHopVelocity = 12f;
+           
 
-            if (characterMotor.isGrounded) {
-                hitStopDuration = 0f;
-                attackRecoil = 0.5f;
-                hitHopVelocity = 1f;
-                physFlags = PhysForceFlags.massIsOne;
-                bonusForce = Vector3.zero;
-                pushForce = 10f;
-            }
+             
             
 
             swingSoundString = $"Play_swing{swingIndex}";//"HenrySwordSwing"
@@ -75,8 +87,8 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
             impactSound = SwordbotAssets.swordHitSoundEvents[swingIndex].index;
 
             base.OnEnter();
-
-            StartAimMode(duration*(earlyExitPercentTime), true);
+            duration = baseDuration / Mathf.Log(attackSpeedStat + 2);
+            StartAimMode(duration*(attackEndPercentTime), true);
         }
 
         public override void FixedUpdate()

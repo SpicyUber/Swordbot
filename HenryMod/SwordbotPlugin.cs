@@ -6,7 +6,9 @@ using Swordbot.Survivors.Swordbot;
 using System.Collections.Generic;
 using System.Security;
 using System.Security.Permissions;
- 
+using UnityEngine;
+using UnityHotReloadNS;
+
 
 [module: UnverifiableCode]
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
@@ -52,5 +54,16 @@ namespace Swordbot
             // make a content pack and add it. this has to be last
             new Modules.ContentPacks().Initialize();
         }
+        void Update()
+        {
+            if (Input.GetKeyUp(KeyCode.F2))
+            {
+                UnityHotReload.LoadNewAssemblyVersion(
+                    typeof(SwordbotPlugin).Assembly, // The currently loaded assembly to replace.
+                    "D:\\Aleksa\\Downloads\\SwordbotCharacter\\HenryTutorial-master\\HenryMod\\bin\\Debug\\netstandard2.1\\SwordbotMod.dll"  // The path to the newly compiled DLL.
+                );
+            }
+        }
+
     }
 }

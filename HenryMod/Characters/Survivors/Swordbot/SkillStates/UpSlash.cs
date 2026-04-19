@@ -2,6 +2,7 @@
 using RoR2;
 using Swordbot.Modules.BaseStates;
 using Swordbot.Survivors.Swordbot;
+using Swordbot.Survivors.Swordbot.Components;
 using SwordbotMod.Characters.Survivors.Swordbot.Components;
 using System;
 using System.Collections.Generic;
@@ -23,8 +24,10 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
         private bool dashUpFlag=true;
         private int upDirectionNumber;
         private CharacterBody.BodyFlags bodyFlags;
+        private bool usedShockwave;
         public override void OnEnter()
-        {  
+        {
+            usedShockwave = false;
             bodyFlags = characterBody.bodyFlags;
             upDirectionNumber = (characterMotor.isGrounded) ? 1 : -1;
             hitboxGroupName = "SwordGroup";
@@ -79,7 +82,7 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
         {
             base.FixedUpdate();
              
-            if (stopwatch>0.1f && isAuthority && dashUpFlag)
+            if (stopwatch>0.1f && isAuthority && dashUpFlag )
             {
                 PunchAllEnemiesUp();
                 characterBody.bodyFlags |= CharacterBody.BodyFlags.IgnoreFallDamage;
@@ -104,9 +107,16 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
 
             if (isAuthority && (fixedAge >= duration || (upDirectionNumber==-1 && characterMotor.isGrounded)))
             {
-              if(upDirectionNumber==-1)  Shockwave();
-               
-                outer.SetNextStateToMain();
+                if (upDirectionNumber == -1)
+                {
+                    earlyExitPercentTime = 2;
+                    Shockwave();
+                    
+                    outer.SetNextStateToMain();
+                }
+                else { 
+                    outer.SetNextStateToMain();
+                }
                 return;
             }
         }
@@ -115,21 +125,54 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
             PlayAnimation("Gesture, Override", "Slash" + ((upDirectionNumber==1)? "Up":"Down"), playbackRateParam, duration, 0);
         }
         private void Shockwave()
-        {
-            foreach (HealthComponent enemy in hitEnemies)
+        {  if(usedShockwave) return; usedShockwave = true;
+            Debug.Log("Shockwave");
+            var colliders =Physics.OverlapSphere(characterBody.transform.position,10f);
+            List<HealthComponent> healthComponents = new List<HealthComponent>();
+            foreach (var collider in colliders)
+            {
+                var hc = collider.GetComponent<HealthComponent>();
+                if (hc != null) { healthComponents.Add(hc);  }
+            }
+            int hitCount = 0;
+            foreach (HealthComponent enemy in healthComponents)
             {
                 if (enemy == null || characterBody == null || Vector3.Distance(enemy.transform.position, characterBody.transform.position) > upSlashMidAttackRange) continue;
                 Vector3 dir = characterBody.inputBank.aimDirection;
                 dir.y = 0; dir.Normalize();
                 midAttackForce = dir * 350f + Vector3.up * 2000f ;
                 Debug.Log("ATTEMPTING Shockwave ENEMY!" + enemy.name);
+                if(enemy && enemy.body.teamComponent.teamIndex != characterBody.teamComponent.teamIndex) {
+                    SwordbotStaticComponent.Mark(enemy);
+                    hitCount++;
+                    Vector3 aimDir = characterBody.inputBank.aimDirection;
+                    aimDir.y = Mathf.Clamp(aimDir.y, 0.2f, 1);
+                    aimDir.Normalize();
+                enemy.TakeDamage(new DamageInfo() {attacker=gameObject,  inflictor = gameObject, procCoefficient = 1, damageType = damageType, damage = attack.damage*10f, position = characterBody.transform.position, force = aimDir*6000f, physForceFlags = PhysForceFlags.ignoreGroundStick, canRejectForce = false  });
+                }
 
-                enemy.TakeDamage(new DamageInfo() {attacker=gameObject,  inflictor = gameObject, procCoefficient = 1, damageType = damageType, damage = attack.damage, position = characterBody.transform.position, force = midAttackForce, physForceFlags = PhysForceFlags.ignoreGroundStick, canRejectForce = false });
-                
-                
 
             }
+            if(hitCount>0)
+            Util.PlaySound($"Play_attack{2}", gameObject);
+            Util.PlaySound($"Play_swing{2}", gameObject);
             Util.PlaySound("Play_landing", gameObject);
+            PlayAnimation("Gesture, Override", "Slam");
+            EffectManager.SimpleImpactEffect(SwordbotAssets.shockwaveExplosionEffect,characterBody.transform.position, characterDirection.forward, true);
+            characterBody.characterMotor.velocity = Vector3.zero;
+            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f,12);
+            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f,12);
+            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f,12);
+            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f, 12);
+            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f, 12);
+            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f, 12);
+            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f, 12);
+            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f, 12);
+            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f, 12);
+            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f, 12);
+            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f, 12);
+            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f, 12);
+
         }
 
         protected void PunchAllEnemiesUp()
@@ -143,7 +186,7 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
                 var aimDirectionFlattened = characterBody.inputBank.aimDirection;
                 aimDirectionFlattened.y = 0;
                 aimDirectionFlattened.Normalize();
-                if (Vector3.Dot((enemy.transform.position - characterBody.transform.position).normalized, characterBody.inputBank.aimDirection) < 0) { hitEnemies.RemoveAt(i); i--; continue; }
+                if (Vector3.Dot((enemy.transform.position - characterBody.transform.position).normalized, characterBody.inputBank.aimDirection) < -0.2f) { hitEnemies.RemoveAt(i); i--; continue; }
                 if ( enemy == null || enemy.body.isBoss || enemy.body.isBoss || characterBody == null || Vector3.Distance(enemy.transform.position, characterBody.transform.position) > upSlashMidAttackRange) continue;
                 Vector3 dir = characterBody.inputBank.aimDirection;
                 dir.y = 0; dir.Normalize();
@@ -152,6 +195,7 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
                 Debug.Log("ATTEMPTING PUNCH UP ENEMY!" + enemy.name);
                  
                 enemy.TakeDamage(new DamageInfo() {attacker=gameObject, inflictor = gameObject, procCoefficient = 1, damageType = damageType, damage = attack.damage, position = characterBody.transform.position, force = midAttackForce, physForceFlags = PhysForceFlags.massIsOne, canRejectForce = false });
+                SwordbotStaticComponent.Mark(enemy);
                 Util.PlaySound(hitSoundString, enemy.gameObject);
 
 

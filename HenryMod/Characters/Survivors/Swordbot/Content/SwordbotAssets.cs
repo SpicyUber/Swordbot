@@ -13,7 +13,7 @@ namespace Swordbot.Survivors.Swordbot
         public static GameObject swordHitImpactEffect;
         public static GameObject staticEffect, explosionEffect;
 
-        public static GameObject bombExplosionEffect;
+        public static GameObject shockwaveExplosionEffect;
 
         // networked hit sounds
         public static NetworkSoundEventDef[] swordHitSoundEvents;
@@ -51,7 +51,7 @@ namespace Swordbot.Survivors.Swordbot
         #region effects
         private static void CreateEffects()
         {
-            CreateBombExplosionEffect();
+            CreateShockwaveExplosionEffect();
             staticEffect = _assetBundle.LoadEffect("Static");
             explosionEffect = _assetBundle.LoadEffect("Explosion");
             swordSwingEffect = _assetBundle.LoadEffect("HenrySwordSwingEffect", true);
@@ -80,16 +80,16 @@ namespace Swordbot.Survivors.Swordbot
             DashSoundEvent = Content.CreateAndAddNetworkSoundEventDef("Play_dash");
         }
 
-        private static void CreateBombExplosionEffect()
+        private static void CreateShockwaveExplosionEffect()
         {
-            bombExplosionEffect = _assetBundle.LoadEffect("BombExplosionEffect", "HenryBombExplosion");
+            shockwaveExplosionEffect = _assetBundle.LoadEffect("Shockwave");
 
-            if (!bombExplosionEffect)
+            if (!shockwaveExplosionEffect)
                 return;
 
-            ShakeEmitter shakeEmitter = bombExplosionEffect.AddComponent<ShakeEmitter>();
+            ShakeEmitter shakeEmitter = shockwaveExplosionEffect.AddComponent<ShakeEmitter>();
             shakeEmitter.amplitudeTimeDecay = true;
-            shakeEmitter.duration = 0.5f;
+            shakeEmitter.duration = 0.25f;
             shakeEmitter.radius = 200f;
             shakeEmitter.scaleShakeRadiusWithLocalScale = false;
 
@@ -124,7 +124,7 @@ namespace Swordbot.Survivors.Swordbot
             bombImpactExplosion.falloffModel = BlastAttack.FalloffModel.None;
             bombImpactExplosion.destroyOnEnemy = true;
             bombImpactExplosion.lifetime = 12f;
-            bombImpactExplosion.impactEffect = bombExplosionEffect;
+            bombImpactExplosion.impactEffect = shockwaveExplosionEffect;
             //bombImpactExplosion.lifetimeExpiredSound = Content.CreateAndAddNetworkSoundEventDef("HenryBombExplosion");
             bombImpactExplosion.timerAfterImpact = true;
             bombImpactExplosion.lifetimeAfterImpact = 0.1f;

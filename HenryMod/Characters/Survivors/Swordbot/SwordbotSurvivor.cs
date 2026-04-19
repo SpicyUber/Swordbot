@@ -61,20 +61,38 @@ namespace Swordbot.Survivors.Swordbot
                 new CustomRendererInfo
                 {
                     childName = "body",
-                  material = assetBundle.LoadMaterial("Body Material")
+                    material = assetBundle.LoadMaterial("Body Material")
 
                 },
                 new CustomRendererInfo
                 {
                     childName = "hat",
+                    material = assetBundle.LoadMaterial("Body Material")
                 },
                  new CustomRendererInfo
                 {
                     childName = "cape",
+                    material = assetBundle.LoadMaterial("Body Material")
                 },
                 new CustomRendererInfo
                 {
                     childName = "sword",
+                    material = assetBundle.LoadMaterial("Body Material")
+                },
+                new CustomRendererInfo
+                {
+                    childName = "eyes",
+                    material = assetBundle.LoadMaterial("Eye Material")
+                },
+                 new CustomRendererInfo
+                {
+                    childName = "lashes",
+                    material = assetBundle.LoadMaterial("Eye Material TwoSided")
+                }, 
+                new CustomRendererInfo
+                {
+                    childName = "bands",
+                    material = assetBundle.LoadMaterial("Body Material TwoSided")
                 }
         };
 
@@ -119,6 +137,7 @@ namespace Swordbot.Survivors.Swordbot
 
             InitializeEntityStateMachines();
             InitializeSkills();
+            InitializeDeathBehavior();
             InitializeSkins();
             InitializeCharacterMaster();
 
@@ -128,7 +147,13 @@ namespace Swordbot.Survivors.Swordbot
 
             AddHooks();
         }
-        
+
+        private void InitializeDeathBehavior()
+        {
+            bodyPrefab.GetComponent<CharacterDeathBehavior>().deathState = new SerializableEntityStateType(typeof(DeathSequence));
+          
+        }
+
         private void AdditionalBodySetup()
         {
             AddHitboxes();

@@ -18,6 +18,24 @@ namespace Swordbot.Survivors.Swordbot.Components
            staticMarks = new List<StaticMark>();
         }
 
+        public static void Mark(HealthComponent hc)
+        {
+            if (!NetworkServer.active) return;
+            StaticMark existingMark = staticMarks.FirstOrDefault((StaticMark m) => {
+                if (m == null || m.target == null) return false;
+                int mInt1 =m.target.GetComponent<HurtBox>().healthComponent.GetInstanceID();
+                
+                int mInt2 = hc.GetInstanceID();
+                return mInt2 == mInt1; });
+            if (existingMark!=null) { hc.body.AddTimedBuff(SwordbotBuffs.staticDebuff, SwordbotStaticValues.staticDuration); existingMark.timeToLive=SwordbotStaticValues.staticDuration; return; }
+            GameObject go = new GameObject("SwordbotStaticMark" + staticMarks.Count, typeof(StaticMark), typeof(NetworkIdentity));
+            StaticMark m1 = go.GetComponent<StaticMark>();
+            m1.target = hc.body.mainHurtBox.transform;
+            m1.timeToLive = SwordbotStaticValues.staticDuration;
+            NetworkServer.Spawn(go);
+            hc.body.AddTimedBuff(SwordbotBuffs.staticDebuff, SwordbotStaticValues.staticDuration);
+            staticMarks.Add(m1 );
+        }
         public static void Mark(Transform transform) { if (!NetworkServer.active) return;
             StaticMark existingMark = staticMarks.FirstOrDefault((StaticMark m) => {
                 if (m == null || m.target == null) return false;
@@ -25,12 +43,15 @@ namespace Swordbot.Survivors.Swordbot.Components
                 if (transform.GetComponent<HurtBox>() == null) return false;
                 int mInt2 = transform.GetComponent<HurtBox>().healthComponent.GetInstanceID();
                 return mInt2 == mInt1; });
-            if (existingMark!=null) { existingMark.timeToLive=SwordbotStaticValues.staticDuration; return; }
+            if (existingMark!=null) { existingMark.timeToLive=SwordbotStaticValues.staticDuration;
+                existingMark.GetComponent<HurtBox>()?.healthComponent?.body?.AddTimedBuff(SwordbotBuffs.staticDebuff, SwordbotStaticValues.staticDuration);
+                return; }
             GameObject go = new GameObject("SwordbotStaticMark" + staticMarks.Count, typeof(StaticMark), typeof(NetworkIdentity));
             StaticMark m1 = go.GetComponent<StaticMark>();
             m1.target = transform;
             m1.timeToLive = SwordbotStaticValues.staticDuration;
             NetworkServer.Spawn(go);
+            m1.target.GetComponent<HurtBox>().healthComponent.body.AddTimedBuff(SwordbotBuffs.staticDebuff, SwordbotStaticValues.staticDuration);
             staticMarks.Add(m1 ); }
 
         private void Update()
