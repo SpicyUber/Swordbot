@@ -189,9 +189,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0
-  m_TransitionOffset: 0.17361322
-  m_ExitTime: 0.60695326
+  m_TransitionDuration: 0.13284683
+  m_TransitionOffset: 0
+  m_ExitTime: 0.5920197
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -258,9 +258,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.003060639
-  m_TransitionOffset: 0.8297621
-  m_ExitTime: 0.99571556
+  m_TransitionDuration: 0.21678334
+  m_TransitionOffset: 0
+  m_ExitTime: 0.5970781
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -307,9 +307,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0
-  m_TransitionOffset: 0.24999976
-  m_ExitTime: 1
+  m_TransitionDuration: 0.24250382
+  m_TransitionOffset: 0.007496171
+  m_ExitTime: 0.7030567
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -2109,9 +2109,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0
-  m_TransitionOffset: 0.7280309
-  m_ExitTime: 0.4005324
+  m_TransitionDuration: 0.7433574
+  m_TransitionOffset: 0
+  m_ExitTime: 0.24067047
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -2804,9 +2804,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.09526074
-  m_TransitionOffset: 0.04697769
-  m_ExitTime: 0.5816809
+  m_TransitionDuration: 0.12187874
+  m_TransitionOffset: 0.004495864
+  m_ExitTime: 0.59469444
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -2879,9 +2879,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.07705008
+  m_TransitionDuration: 0.3043241
   m_TransitionOffset: 0
-  m_ExitTime: 0.0041272356
+  m_ExitTime: 6.8619727e-10
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -3996,7 +3996,7 @@ AnimatorStateMachine:
     m_Position: {x: -180, y: 190, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1102286842317571118}
-    m_Position: {x: -12, y: 36, z: 0}
+    m_Position: {x: -10, y: 40, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1102718974041935366}
     m_Position: {x: -12, y: 300, z: 0}
