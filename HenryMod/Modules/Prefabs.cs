@@ -8,6 +8,7 @@ using static RoR2.CharacterAI.AISkillDriver;
 using RoR2.Skills;
 using System;
 using System.Linq;
+using Swordbot.Survivors.Swordbot;
 
 namespace Swordbot.Modules
 {
@@ -22,14 +23,14 @@ namespace Swordbot.Modules
         public static GameObject CreateDisplayPrefab(AssetBundle assetBundle, string displayPrefabName, GameObject prefab)
         {
             GameObject display = assetBundle.LoadAsset<GameObject>(displayPrefabName);
-            if (display == null)
+            if(display == null)
             {
                 Log.Error($"could not load display prefab {displayPrefabName}. Make sure this prefab exists in assetbundle {assetBundle.name}");
                 return null;
             }
 
             CharacterModel characterModel = display.GetComponent<CharacterModel>();
-            if (!characterModel)
+            if(!characterModel)
             {
                 characterModel = display.AddComponent<CharacterModel>();
             }
@@ -45,7 +46,7 @@ namespace Swordbot.Modules
         public static GameObject LoadCharacterModel(AssetBundle assetBundle, string modelName)
         {
             GameObject model = assetBundle.LoadAsset<GameObject>(modelName);
-            if (model == null)
+            if(model == null)
             {
                 Log.Error($"could not load model prefab {modelName}. Make sure this prefab exists in assetbundle {assetBundle.name}");
                 return null;
@@ -56,7 +57,7 @@ namespace Swordbot.Modules
         public static GameObject LoadCharacterBody(AssetBundle assetBundle, string bodyName)
         {
             GameObject body = assetBundle.LoadAsset<GameObject>(bodyName);
-            if (body == null)
+            if(body == null)
             {
                 Log.Error($"could not load body prefab {bodyName}. Make sure this prefab exists in assetbundle {assetBundle.name}");
                 return null;
@@ -67,7 +68,7 @@ namespace Swordbot.Modules
         public static GameObject CloneCharacterBody(BodyInfo bodyInfo)
         {
             GameObject clonedBody = RoR2.LegacyResourcesAPI.Load<GameObject>("Prefabs/CharacterBodies/" + bodyInfo.bodyNameToClone + "Body");
-            if (!clonedBody)
+            if(!clonedBody)
             {
                 Log.Error(bodyInfo.bodyNameToClone + " Body to clone is not a valid body, character creation failed");
                 return null;
@@ -75,7 +76,7 @@ namespace Swordbot.Modules
 
             GameObject newBodyPrefab = PrefabAPI.InstantiateClone(clonedBody, bodyInfo.bodyName);
 
-            for (int i = newBodyPrefab.transform.childCount - 1; i >= 0; i--)
+            for(int i = newBodyPrefab.transform.childCount - 1; i >= 0; i--)
             {
                 UnityEngine.Object.DestroyImmediate(newBodyPrefab.transform.GetChild(i).gameObject);
             }
@@ -116,7 +117,7 @@ namespace Swordbot.Modules
         /// </summary>
         public static GameObject CreateBodyPrefab(GameObject newBodyPrefab, GameObject model, BodyInfo bodyInfo)
         {
-            if (model == null || newBodyPrefab == null)
+            if(model == null || newBodyPrefab == null)
             {
                 Log.Error($"Character creation failed. Model: {model}, Body: {newBodyPrefab}");
                 return null;
@@ -167,7 +168,7 @@ namespace Swordbot.Modules
             bodyComponent.autoCalculateLevelStats = bodyInfo.autoCalculateLevelStats;
 
             //there is a standard for survivors that should be followed for how much they gain from level up.
-            if (bodyInfo.autoCalculateLevelStats)
+            if(bodyInfo.autoCalculateLevelStats)
             {
                 bodyComponent.levelMaxHealth = Mathf.Round(bodyComponent.baseMaxHealth * 0.3f);
                 bodyComponent.levelMaxShield = Mathf.Round(bodyComponent.baseMaxShield * 0.3f);
@@ -215,7 +216,7 @@ namespace Swordbot.Modules
         private static Transform AddCharacterModelToSurvivorBody(GameObject bodyPrefab, Transform modelTransform, BodyInfo bodyInfo)
         {
             Transform modelBase = bodyPrefab.transform.Find("ModelBase");
-            if (modelBase == null) // if these objects exist, you must have set them as you want them in editor
+            if(modelBase == null) // if these objects exist, you must have set them as you want them in editor
             {
                 modelBase = new GameObject("ModelBase").transform;
                 modelBase.parent = bodyPrefab.transform;
@@ -228,7 +229,7 @@ namespace Swordbot.Modules
             modelTransform.localRotation = Quaternion.identity;
 
             Transform cameraPivot = bodyPrefab.transform.Find("CameraPivot");
-            if (cameraPivot == null)
+            if(cameraPivot == null)
             {
                 cameraPivot = new GameObject("CameraPivot").transform;
                 cameraPivot.parent = bodyPrefab.transform;
@@ -237,7 +238,7 @@ namespace Swordbot.Modules
             }
 
             Transform aimOrigin = bodyPrefab.transform.Find("AimOrigin");
-            if (aimOrigin == null)
+            if(aimOrigin == null)
             {
                 aimOrigin = new GameObject("AimOrigin").transform;
                 aimOrigin.parent = bodyPrefab.transform;
@@ -251,7 +252,7 @@ namespace Swordbot.Modules
 
         private static void SetupCharacterDirection(GameObject prefab, Transform modelBaseTransform, Transform modelTransform)
         {
-            if (!prefab.GetComponent<CharacterDirection>())
+            if(!prefab.GetComponent<CharacterDirection>())
                 return;
 
             CharacterDirection characterDirection = prefab.GetComponent<CharacterDirection>();
@@ -300,7 +301,7 @@ namespace Swordbot.Modules
 
             CharacterModel characterModel = bodyPrefab.GetComponent<ModelLocator>().modelTransform.gameObject.GetComponent<CharacterModel>();
             bool preattached = characterModel != null;
-            if (!preattached)
+            if(!preattached)
                 characterModel = bodyPrefab.GetComponent<ModelLocator>().modelTransform.gameObject.AddComponent<CharacterModel>();
 
             characterModel.body = bodyPrefab.GetComponent<CharacterBody>();
@@ -309,7 +310,7 @@ namespace Swordbot.Modules
             characterModel.invisibilityCount = 0;
             characterModel.temporaryOverlays = new List<TemporaryOverlayInstance>();
 
-            if (!preattached)
+            if(!preattached)
             {
                 SetupCustomRendererInfos(characterModel, customInfos);
             }
@@ -328,14 +329,14 @@ namespace Swordbot.Modules
 
         public static void SetupPreAttachedRendererInfos(CharacterModel characterModel)
         {
-            for (int i = 0; i < characterModel.baseRendererInfos.Length; i++)
+            for(int i = 0; i < characterModel.baseRendererInfos.Length; i++)
             {
-                if (characterModel.baseRendererInfos[i].defaultMaterial == null)
+                if(characterModel.baseRendererInfos[i].defaultMaterial == null)
                 {
                     characterModel.baseRendererInfos[i].defaultMaterial = characterModel.baseRendererInfos[i].renderer.sharedMaterial;
                 }
 
-                if (characterModel.baseRendererInfos[i].defaultMaterial == null)
+                if(characterModel.baseRendererInfos[i].defaultMaterial == null)
                 {
                     Log.Error($"no material for rendererinfo of this renderer: {characterModel.baseRendererInfos[i].renderer}");
                 }
@@ -347,7 +348,7 @@ namespace Swordbot.Modules
         {
 
             ChildLocator childLocator = characterModel.GetComponent<ChildLocator>();
-            if (!childLocator)
+            if(!childLocator)
             {
                 Log.Error("Failed CharacterModel setup: ChildLocator component does not exist on the model");
                 return;
@@ -355,23 +356,23 @@ namespace Swordbot.Modules
 
             List<CharacterModel.RendererInfo> rendererInfos = new List<CharacterModel.RendererInfo>();
 
-            for (int i = 0; i < customInfos.Length; i++)
+            for(int i = 0; i < customInfos.Length; i++)
             {
-                if (!childLocator.FindChild(customInfos[i].childName))
+                if(!childLocator.FindChild(customInfos[i].childName))
                 {
                     Log.Error("Trying to add a RendererInfo for a renderer that does not exist: " + customInfos[i].childName);
                 }
                 else
                 {
                     Renderer rend = childLocator.FindChild(customInfos[i].childName).GetComponent<Renderer>();
-                    if (rend)
+                    if(rend)
                     {
 
                         Material mat = customInfos[i].material;
 
-                        if (mat == null)
+                        if(mat == null)
                         {
-                            if (customInfos[i].dontHotpoo)
+                            if(customInfos[i].dontHotpoo)
                             {
                                 mat = rend.sharedMaterial;
                             }
@@ -395,8 +396,8 @@ namespace Swordbot.Modules
             characterModel.baseRendererInfos = rendererInfos.ToArray();
         }
 
-        private static void SetupHurtboxGroup(GameObject bodyPrefab, GameObject model) 
-        {         
+        private static void SetupHurtboxGroup(GameObject bodyPrefab, GameObject model)
+        {
             SetupMainHurtboxesFromChildLocator(bodyPrefab, model);
 
             SetHurtboxesHealthComponents(bodyPrefab);
@@ -407,7 +408,7 @@ namespace Swordbot.Modules
         /// </summary>
         private static void SetupMainHurtboxesFromChildLocator(GameObject bodyPrefab, GameObject model)
         {
-            if (bodyPrefab.GetComponent<HurtBoxGroup>() != null)
+            if(bodyPrefab.GetComponent<HurtBoxGroup>() != null)
             {
                 Log.Debug("Hitboxgroup already exists on model prefab. aborting code setup");
                 return;
@@ -415,7 +416,7 @@ namespace Swordbot.Modules
 
             ChildLocator childLocator = model.GetComponent<ChildLocator>();
 
-            if (string.IsNullOrEmpty(childLocator.FindChildNameInsensitive("MainHurtbox")))
+            if(string.IsNullOrEmpty(childLocator.FindChildNameInsensitive("MainHurtbox")))
             {
                 Log.Error("Could not set up main hurtbox: make sure you have a transform pair in your prefab's ChildLocator called 'MainHurtbox'");
                 return;
@@ -425,7 +426,7 @@ namespace Swordbot.Modules
 
             HurtBox headHurtbox = null;
             GameObject headHurtboxObject = childLocator.FindChildGameObjectInsensitive("HeadHurtbox");
-            if (headHurtboxObject)
+            if(headHurtboxObject)
             {
                 Log.Debug("HeadHurtboxFound. Setting up");
                 headHurtbox = headHurtboxObject.AddComponent<HurtBox>();
@@ -447,7 +448,7 @@ namespace Swordbot.Modules
             mainHurtbox.hurtBoxGroup = hurtBoxGroup;
             mainHurtbox.indexInGroup = 0;
 
-            if (headHurtbox)
+            if(headHurtbox)
             {
                 hurtBoxGroup.hurtBoxes = new HurtBox[]
                 {
@@ -483,10 +484,10 @@ namespace Swordbot.Modules
         {
             HealthComponent healthComponent = bodyPrefab.GetComponent<HealthComponent>();
 
-            foreach (HurtBoxGroup hurtboxGroup in bodyPrefab.GetComponentsInChildren<HurtBoxGroup>())
+            foreach(HurtBoxGroup hurtboxGroup in bodyPrefab.GetComponentsInChildren<HurtBoxGroup>())
             {
                 hurtboxGroup.mainHurtBox.healthComponent = healthComponent;
-                for (int i = 0; i < hurtboxGroup.hurtBoxes.Length; i++)
+                for(int i = 0; i < hurtboxGroup.hurtBoxes.Length; i++)
                 {
                     hurtboxGroup.hurtBoxes[i].healthComponent = healthComponent;
                 }
@@ -496,8 +497,8 @@ namespace Swordbot.Modules
         private static void SetupFootstepController(GameObject model)
         {
             FootstepHandler footstepHandler = model.AddComponent<FootstepHandler>();
-            footstepHandler.baseFootstepString = "Play_player_footstep";
-            footstepHandler.sprintFootstepOverrideString = "";
+            footstepHandler.baseFootstepString = "Play_step";
+            footstepHandler.sprintFootstepOverrideString = "Play_step";
             footstepHandler.enableFootstepDust = true;
             footstepHandler.footstepDustPrefab = RoR2.LegacyResourcesAPI.Load<GameObject>("Prefabs/GenericFootstepDust");
         }
@@ -506,17 +507,17 @@ namespace Swordbot.Modules
         {
             RagdollController ragdollController = model.GetComponent<RagdollController>();
 
-            if (!ragdollController) return;
+            if(!ragdollController) return;
 
-            if (ragdollMaterial == null) ragdollMaterial = RoR2.LegacyResourcesAPI.Load<GameObject>("Prefabs/CharacterBodies/CommandoBody").GetComponentInChildren<RagdollController>().bones[1].GetComponent<Collider>().material;
+            if(ragdollMaterial == null) ragdollMaterial = RoR2.LegacyResourcesAPI.Load<GameObject>("Prefabs/CharacterBodies/CommandoBody").GetComponentInChildren<RagdollController>().bones[1].GetComponent<Collider>().material;
 
-            foreach (Transform boneTransform in ragdollController.bones)
+            foreach(Transform boneTransform in ragdollController.bones)
             {
-                if (boneTransform)
+                if(boneTransform)
                 {
                     boneTransform.gameObject.layer = LayerIndex.ragdoll.intVal;
                     Collider boneCollider = boneTransform.GetComponent<Collider>();
-                    if (boneCollider)
+                    if(boneCollider)
                     {
                         //boneCollider.material = ragdollMaterial;
                         boneCollider.sharedMaterial = ragdollMaterial;
@@ -565,7 +566,7 @@ namespace Swordbot.Modules
             characterMaster.bodyPrefab = bodyPrefab;
 
             AISkillDriver[] drivers = masterObject.GetComponents<AISkillDriver>();
-            for (int i = 0; i < drivers.Length; i++)
+            for(int i = 0; i < drivers.Length; i++)
             {
                 UnityEngine.Object.Destroy(drivers[i]);
             }
@@ -616,7 +617,7 @@ namespace Swordbot.Modules
         {
             EntityStateMachine[] machines = bodyPrefab.GetComponents<EntityStateMachine>();
 
-            for (int i = machines.Length - 1; i >= 0; i--)
+            for(int i = machines.Length - 1; i >= 0; i--)
             {
                 UnityEngine.Object.DestroyImmediate(machines[i]);
             }
@@ -625,19 +626,19 @@ namespace Swordbot.Modules
             networkMachine.stateMachines = Array.Empty<EntityStateMachine>();
 
             CharacterDeathBehavior deathBehavior = bodyPrefab.GetComponent<CharacterDeathBehavior>();
-            if (deathBehavior)
+            if(deathBehavior)
             {
                 deathBehavior.idleStateMachine = Array.Empty<EntityStateMachine>();
             }
 
             SetStateOnHurt setStateOnHurt = bodyPrefab.GetComponent<SetStateOnHurt>();
-            if (setStateOnHurt)
+            if(setStateOnHurt)
             {
                 setStateOnHurt.idleStateMachine = Array.Empty<EntityStateMachine>();
             }
 
             CharacterBody body = bodyPrefab.GetComponent<CharacterBody>();
-            if (body)
+            if(body)
             {
                 body.vehicleIdleStateMachine = Array.Empty<EntityStateMachine>();
             }
@@ -651,7 +652,7 @@ namespace Swordbot.Modules
         public static EntityStateMachine AddEntityStateMachine(GameObject prefab, string machineName, Type mainStateType = null, Type initalStateType = null, bool addToHurt = true, bool addToDeath = true)
         {
             EntityStateMachine entityStateMachine = EntityStateMachine.FindByCustomName(prefab, machineName);
-            if (entityStateMachine == null)
+            if(entityStateMachine == null)
             {
                 entityStateMachine = prefab.AddComponent<EntityStateMachine>();
             }
@@ -662,13 +663,13 @@ namespace Swordbot.Modules
             //Set up entitystatemachine
             entityStateMachine.customName = machineName;
 
-            if (mainStateType == null)
+            if(mainStateType == null)
             {
                 mainStateType = typeof(EntityStates.Idle);
             }
             entityStateMachine.mainStateType = new EntityStates.SerializableEntityStateType(mainStateType);
 
-            if (initalStateType == null)
+            if(initalStateType == null)
             {
                 initalStateType = typeof(EntityStates.Idle);
             }
@@ -676,7 +677,7 @@ namespace Swordbot.Modules
 
             //Add to NetworkStateMachine so it is networked, as it sounds
             NetworkStateMachine networkMachine = prefab.GetComponent<NetworkStateMachine>();
-            if (networkMachine)
+            if(networkMachine)
             {
                 networkMachine.stateMachines = networkMachine.stateMachines.Append(entityStateMachine).ToArray();
             }
@@ -684,7 +685,7 @@ namespace Swordbot.Modules
             //Add to the array of "idle" StateMachines. For when the character dies.
             //This component sets that state machine to idle, stopping what it was doing
             CharacterDeathBehavior deathBehavior = prefab.GetComponent<CharacterDeathBehavior>();
-            if (deathBehavior && addToDeath)
+            if(deathBehavior && addToDeath)
             {
                 deathBehavior.idleStateMachine = deathBehavior.idleStateMachine.Append(entityStateMachine).ToArray();
             }
@@ -692,7 +693,7 @@ namespace Swordbot.Modules
             //Add to the array of "idle" StateMachines.
             //Same as CharacterDeathBehavior but for stunning/freezing/etc
             SetStateOnHurt setStateOnHurt = prefab.GetComponent<SetStateOnHurt>();
-            if (setStateOnHurt && addToHurt)
+            if(setStateOnHurt && addToHurt)
             {
                 setStateOnHurt.idleStateMachine = setStateOnHurt.idleStateMachine.Append(entityStateMachine).ToArray();
             }
@@ -701,7 +702,7 @@ namespace Swordbot.Modules
             //Same as CharacterDeathBehavior but for entering a vehicle.
             //note only the non-body states are added to this. there is no equivelent for the "main" statemachine in the AddMainEntityStateMachine function below
             CharacterBody body = prefab.GetComponent<CharacterBody>();
-            if (body)
+            if(body)
             {
                 body.vehicleIdleStateMachine = body.vehicleIdleStateMachine.Append(entityStateMachine).ToArray();
             }
@@ -716,7 +717,7 @@ namespace Swordbot.Modules
         public static EntityStateMachine AddMainEntityStateMachine(GameObject bodyPrefab, string machineName = "Body", Type mainStateType = null, Type initalStateType = null)
         {
             EntityStateMachine entityStateMachine = EntityStateMachine.FindByCustomName(bodyPrefab, machineName);
-            if (entityStateMachine == null)
+            if(entityStateMachine == null)
             {
                 entityStateMachine = bodyPrefab.AddComponent<EntityStateMachine>();
             }
@@ -728,13 +729,13 @@ namespace Swordbot.Modules
             //Create entitystatemachine
             entityStateMachine.customName = machineName;
 
-            if (mainStateType == null)
+            if(mainStateType == null)
             {
                 mainStateType = typeof(EntityStates.GenericCharacterMain);
             }
             entityStateMachine.mainStateType = new EntityStates.SerializableEntityStateType(mainStateType);
 
-            if (initalStateType == null)
+            if(initalStateType == null)
             {
                 initalStateType = typeof(EntityStates.SpawnTeleporterState);
             }
@@ -742,7 +743,7 @@ namespace Swordbot.Modules
 
             //Add to NetworkStateMachine so it is networked, as it sounds
             NetworkStateMachine networkMachine = bodyPrefab.GetComponent<NetworkStateMachine>();
-            if (networkMachine)
+            if(networkMachine)
             {
                 networkMachine.stateMachines = networkMachine.stateMachines.Append(entityStateMachine).ToArray();
             }
@@ -751,7 +752,7 @@ namespace Swordbot.Modules
             //This EntityStateMachine will enter the death state, while other state machines are set to idle
             //The death state is set elsewhere, (likely in the commando clone). It is typically GenericCharacterDeath, but you can set it to whatever you want.
             CharacterDeathBehavior deathBehavior = bodyPrefab.GetComponent<CharacterDeathBehavior>();
-            if (deathBehavior)
+            if(deathBehavior)
             {
                 deathBehavior.deathStateMachine = entityStateMachine;
             }
@@ -759,7 +760,7 @@ namespace Swordbot.Modules
             //Add to the main state machine field of SetStateOnHurt for when the character is Stunned/Frozen/etc,
             //This EntityStateMachine will enter the relative state, while other state machines are set to idle.
             SetStateOnHurt setStateOnHurt = bodyPrefab.GetComponent<SetStateOnHurt>();
-            if (setStateOnHurt)
+            if(setStateOnHurt)
             {
                 setStateOnHurt.targetStateMachine = entityStateMachine;
             }
@@ -777,11 +778,11 @@ namespace Swordbot.Modules
             ChildLocator childLocator = modelPrefab.GetComponent<ChildLocator>();
 
             Transform[] hitboxTransforms = new Transform[hitboxChildNames.Length];
-            for (int i = 0; i < hitboxChildNames.Length; i++)
+            for(int i = 0; i < hitboxChildNames.Length; i++)
             {
                 hitboxTransforms[i] = childLocator.FindChild(hitboxChildNames[i]);
 
-                if (hitboxTransforms[i] == null)
+                if(hitboxTransforms[i] == null)
                 {
                     Log.Error("missing hitbox for " + hitboxChildNames[i]);
                 }
@@ -797,9 +798,9 @@ namespace Swordbot.Modules
         {
             List<HitBox> hitBoxes = new List<HitBox>();
 
-            foreach (Transform i in hitBoxTransforms)
+            foreach(Transform i in hitBoxTransforms)
             {
-                if (i == null)
+                if(i == null)
                 {
                     Log.Error($"Error setting up hitboxGroup for {hitBoxGroupName}: hitbox transform was null");
                     continue;

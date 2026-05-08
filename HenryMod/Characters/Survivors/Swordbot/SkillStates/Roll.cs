@@ -28,15 +28,15 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
             base.OnEnter();
             animator = GetModelAnimator();
             stopwatch = 0f;
-            earlyExitPercent = 0.05f; 
+            earlyExitPercent = 0.05f;
 
-            if (isAuthority && inputBank && characterBody)
+            if(isAuthority && inputBank && characterBody)
             {
-                 forwardDirection = (inputBank.moveVector == Vector3.zero ? characterDirection.forward : inputBank.moveVector).normalized;
-              //  forwardDirection = base.characterBody.inputBank.moveVector;
-                
+                forwardDirection = (inputBank.moveVector == Vector3.zero ? characterDirection.forward : inputBank.moveVector).normalized;
+                //  forwardDirection = base.characterBody.inputBank.moveVector;
+
             }
- 
+            EffectManager.SimpleMuzzleFlash(SwordbotAssets.dashEffect, gameObject, "body", true);
 
             Vector3 rhs = characterDirection ? characterDirection.forward : forwardDirection;
             Vector3 rhs2 = Vector3.Cross(Vector3.up, rhs);
@@ -46,7 +46,7 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
 
             RecalculateRollSpeed();
 
-            if (characterMotor && characterDirection)
+            if(characterMotor && characterDirection)
             {
                 characterMotor.velocity.y = 0f;
                 characterMotor.velocity = forwardDirection * rollSpeed;
@@ -58,11 +58,11 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
             PlayAnimation("Gesture, Override", "Roll", "Roll.playbackRate", duration);
             Util.PlaySound(dodgeSoundString, gameObject);
 
-            if (NetworkServer.active)
+            if(NetworkServer.active)
             {
-               // characterBody.AddTimedBuff(SwordbotBuffs.armorBuff, 3f * duration);
+                // characterBody.AddTimedBuff(SwordbotBuffs.armorBuff, 3f * duration);
                 characterBody.AddTimedBuff(RoR2Content.Buffs.HiddenInvincibility, 1f * duration);
-                 
+
             }
         }
 
@@ -71,31 +71,31 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
             rollSpeed = moveSpeedStat * Mathf.Lerp(initialSpeedCoefficient, finalSpeedCoefficient, fixedAge / duration);
         }
 
-     
+
 
         public override void FixedUpdate()
         {
             base.FixedUpdate();
             RecalculateRollSpeed();
 
-            if (characterDirection) characterDirection.forward = forwardDirection;
-            if (cameraTargetParams) cameraTargetParams.fovOverride = Mathf.Lerp(dodgeFOV, 60f, fixedAge / duration);
-             
+            if(characterDirection) characterDirection.forward = forwardDirection;
+            if(cameraTargetParams) cameraTargetParams.fovOverride = Mathf.Lerp(dodgeFOV, 60f, fixedAge / duration);
+
             stopwatch += Time.fixedDeltaTime;
-             
+
             Vector3 normalized = (transform.position - previousPosition).normalized;
-            if (characterMotor && characterDirection && normalized != Vector3.zero)
+            if(characterMotor && characterDirection && normalized != Vector3.zero)
             {
                 Vector3 vector = normalized * rollSpeed;
                 float d = Mathf.Max(Vector3.Dot(vector, forwardDirection), 0f);
                 vector = forwardDirection * d;
-               // vector.y = 0f;
+                // vector.y = 0f;
 
                 characterMotor.velocity = vector;
             }
             previousPosition = transform.position;
 
-            if (isAuthority && fixedAge >= duration)
+            if(isAuthority && fixedAge >= duration)
             {
                 outer.SetNextStateToMain();
                 return;
@@ -103,21 +103,21 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
         }
         public override InterruptPriority GetMinimumInterruptPriority()
         {
-            if (stopwatch < duration * earlyExitPercent)
+            if(stopwatch < duration * earlyExitPercent)
             {
                 Debug.Log($"INTERRUPT MSG: Skill, stopwatch{stopwatch}");
                 return InterruptPriority.Skill;
             }
-            
+
 
             Debug.Log($"INTERRUPT MSG: Any, stopwatch{stopwatch}");
             return InterruptPriority.Any;
         }
         public override void OnExit()
         {
-            if (cameraTargetParams) cameraTargetParams.fovOverride = -1f;
-           
-             
+            if(cameraTargetParams) cameraTargetParams.fovOverride = -1f;
+
+
             base.OnExit();
 
             characterMotor.disableAirControlUntilCollision = false;

@@ -10,7 +10,8 @@ using SwordbotMod.Characters.Survivors.Swordbot.Components;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
- 
+using static RoR2.SkinDefParams;
+
 
 
 
@@ -31,11 +32,11 @@ namespace Swordbot.Survivors.Swordbot
         public override string modelPrefabName => "mdlSwordbot";
         public override string displayPrefabName => "SwordbotDisplay";
 
-        public const string HENRY_PREFIX = SwordbotPlugin.DEVELOPER_PREFIX + "_SWORDBOT_";
+        public const string HENRY_PREFIX = SwordbotPlugin.DEVELOPER_PREFIX + "_GUARDIAN_";
 
         //used when registering your survivor's language tokens
         public override string survivorTokenPrefix => HENRY_PREFIX;
-        
+
         public override BodyInfo bodyInfo => new BodyInfo
         {
             bodyName = bodyName,
@@ -88,16 +89,21 @@ namespace Swordbot.Survivors.Swordbot
                 {
                     childName = "lashes",
                     material = assetBundle.LoadMaterial("Eye Material TwoSided")
-                }, 
+                },
                 new CustomRendererInfo
                 {
                     childName = "bands",
-                    material = assetBundle.LoadMaterial("Body Material TwoSided")
+                    material = assetBundle.LoadMaterial("Eye Material TwoSided")
+                },
+                new CustomRendererInfo
+                {
+                    childName = "bangs",
+                    material = assetBundle.LoadMaterial("Body Material")
                 }
         };
 
         public override UnlockableDef characterUnlockableDef => SwordbotUnlockables.characterUnlockableDef;
-        
+
         public override ItemDisplaysBase itemDisplays => new SwordbotItemDisplays();
 
         //set in base classes
@@ -116,9 +122,9 @@ namespace Swordbot.Survivors.Swordbot
 
             //if (!characterEnabled.Value)
             //    return;
-            
+
             base.Initialize();
-            
+
         }
 
         public override void InitializeCharacter()
@@ -135,6 +141,7 @@ namespace Swordbot.Survivors.Swordbot
             SwordbotAssets.Init(assetBundle);
             SwordbotBuffs.Init(assetBundle);
 
+            InitializeEvents();
             InitializeEntityStateMachines();
             InitializeSkills();
             InitializeDeathBehavior();
@@ -143,15 +150,35 @@ namespace Swordbot.Survivors.Swordbot
 
             AdditionalBodySetup();
 
-           
+
 
             AddHooks();
+        }
+
+        private void InitializeEvents()
+        {
+            On.RoR2.SurvivorMannequins.SurvivorMannequinSlotController.RebuildMannequinInstance += PlaySelectedSound;
+
+        }
+
+
+
+        private void PlaySelectedSound(On.RoR2.SurvivorMannequins.SurvivorMannequinSlotController.orig_RebuildMannequinInstance orig, RoR2.SurvivorMannequins.SurvivorMannequinSlotController self)
+        {
+            orig(self);
+            if(self._currentSurvivorDef.displayPrefab.name == displayPrefab.name)
+            {
+                Debug.Log("true!!");
+                Util.PlaySound("Play_select", self.gameObject);
+            }
+            else Debug.Log("false!!");
+
         }
 
         private void InitializeDeathBehavior()
         {
             bodyPrefab.GetComponent<CharacterDeathBehavior>().deathState = new SerializableEntityStateType(typeof(DeathSequence));
-          
+
         }
 
         private void AdditionalBodySetup()
@@ -159,6 +186,8 @@ namespace Swordbot.Survivors.Swordbot
             AddHitboxes();
             bodyPrefab.AddComponent<SwordbotStaticComponent>();
             bodyPrefab.AddComponent<PreviousStateTracker>();
+            bodyPrefab.AddComponent<LandingTracker>().Motor = bodyPrefab.GetComponent<CharacterMotor>();
+
             //bodyPrefab.AddComponent<HuntressTrackerComopnent>();
             //anything else here
         }
@@ -169,7 +198,7 @@ namespace Swordbot.Survivors.Swordbot
             Prefabs.SetupHitBoxGroup(characterModelObject, "SwordGroup", "SwordHitbox");
         }
 
-        public override void InitializeEntityStateMachines() 
+        public override void InitializeEntityStateMachines()
         {
             //clear existing state machines from your cloned body (probably commando)
             //omit all this if you want to just keep theirs
@@ -178,8 +207,8 @@ namespace Swordbot.Survivors.Swordbot
             //the main "Body" state machine has some special properties
             Prefabs.AddMainEntityStateMachine(bodyPrefab, "Body", typeof(EntityStates.GenericCharacterMain), typeof(EntityStates.SpawnTeleporterState));
             //if you set up a custom main characterstate, set it up here
-                //don't forget to register custom entitystates in your HenryStates.cs
-
+            //don't forget to register custom entitystates in your HenryStates.cs
+            Prefabs.AddEntityStateMachine(bodyPrefab, "Legs", typeof(DefaultJumpState), typeof(DefaultJumpState));
             Prefabs.AddEntityStateMachine(bodyPrefab, "Weapon");
             Prefabs.AddEntityStateMachine(bodyPrefab, "Weapon2");
         }
@@ -271,7 +300,8 @@ namespace Swordbot.Survivors.Swordbot
             primarySkillDef1.mustKeyPress = false;
             primarySkillDef1.stepCount = 3;
             primarySkillDef1.stepGraceDuration = 1f;
-             
+            primarySkillDef1.cancelSprintingOnActivation = true;
+
             //primarySkillDef1.interruptPriority = InterruptPriority.Skill;
             Skills.AddPrimarySkills(bodyPrefab, primarySkillDef1);
         }
@@ -397,7 +427,7 @@ namespace Swordbot.Survivors.Swordbot
                 resetCooldownTimerOnUse = false,
                 fullRestockOnAssign = true,
                 dontAllowPastMaxStocks = false,
-                
+
                 beginSkillCooldownOnSkillEnd = false,
 
                 isCombatSkill = true,
@@ -405,16 +435,16 @@ namespace Swordbot.Survivors.Swordbot
                 cancelSprintingOnActivation = false,
                 forceSprintDuringState = false,
 
-                
+
                 mustKeyPress = true,
                 interruptPriority = InterruptPriority.PrioritySkill
             });
 
             Skills.AddSpecialSkills(bodyPrefab, specialSkillDef1);
-          
+
         }
         #endregion skills
-        
+
         #region skins
         public override void InitializeSkins()
         {
@@ -427,27 +457,77 @@ namespace Swordbot.Survivors.Swordbot
 
             #region DefaultSkin
             //this creates a SkinDef with all default fields
-            SkinDef defaultSkin = Skins.CreateSkinDef("DEFAULT_SKIN",
-                assetBundle.LoadAsset<Sprite>("texMainSkin"),
+            SkinDef hatCapeSkin = Skins.CreateSkinDef($"Hat And Coat",
+                assetBundle.LoadAsset<Sprite>("hatcape"),
+                defaultRendererinfos,
+                prefabCharacterModel.gameObject);
+
+            SkinDef bangsCapeSkin = Skins.CreateSkinDef($"Bangs And Coat",
+                assetBundle.LoadAsset<Sprite>("bangscape"),
+                defaultRendererinfos,
+                prefabCharacterModel.gameObject);
+
+            SkinDef baseSkin = Skins.CreateSkinDef($"Base",
+                assetBundle.LoadAsset<Sprite>("base"),
+                defaultRendererinfos,
+                prefabCharacterModel.gameObject);
+
+            SkinDef hatOnlySkin = Skins.CreateSkinDef($"Hat Only",
+                assetBundle.LoadAsset<Sprite>("hat"),
+                defaultRendererinfos,
+                prefabCharacterModel.gameObject);
+
+            SkinDef bangsOnlySkin = Skins.CreateSkinDef($"Bangs Only",
+                assetBundle.LoadAsset<Sprite>("bangs"),
                 defaultRendererinfos,
                 prefabCharacterModel.gameObject);
 
             //these are your Mesh Replacements. The order here is based on your CustomRendererInfos from earlier
-                //pass in meshes as they are named in your assetbundle
+            //pass in meshes as they are named in your assetbundle
             //currently not needed as with only 1 skin they will simply take the default meshes
-                //uncomment this when you have another skin
-            //defaultSkin.meshReplacements = Modules.Skins.getMeshReplacements(assetBundle, defaultRendererinfos,
-            //    "meshHenrySword",
-            //    "meshHenryGun",
-            //    "meshHenry");
+            //uncomment this when you have another skin
+            hatCapeSkin.gameObjectActivations
+                = new[]
+                { new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("hat"), shouldActivate = true },
+                new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("cape"), shouldActivate = true },
+                new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("bands"), shouldActivate = true },
+                     new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("bangs"), shouldActivate = false } };
+            bangsCapeSkin.gameObjectActivations
+                = new[]
+                { new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("bangs"), shouldActivate = true },
+                new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("cape"), shouldActivate = true },
+                new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("bands"), shouldActivate = true },
+                     new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("hat"), shouldActivate = false } };
+            baseSkin.gameObjectActivations
+                = new[]
+                { new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("bangs"), shouldActivate = false },
+                new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("cape"), shouldActivate = false },
+                new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("bands"), shouldActivate = false },
+                     new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("hat"), shouldActivate = false } };
+            hatOnlySkin.gameObjectActivations
+                = new[]
+                { new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("bangs"), shouldActivate = false },
+                new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("cape"), shouldActivate = false },
+                new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("bands"), shouldActivate = false },
+                     new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("hat"), shouldActivate = true } };
 
+            bangsOnlySkin.gameObjectActivations
+                = new[]
+                { new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("bangs"), shouldActivate = true },
+                new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("cape"), shouldActivate = false },
+                new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("bands"), shouldActivate = false },
+                     new SkinDef.GameObjectActivation() { gameObject = childLocator.FindChildGameObject("hat"), shouldActivate = false } };
             //add new skindef to our list of skindefs. this is what we'll be passing to the SkinController
-            skins.Add(defaultSkin);
+            skins.Add(baseSkin);
+            skins.Add(hatCapeSkin);
+            skins.Add(bangsCapeSkin);
+            skins.Add(hatOnlySkin);
+            skins.Add(bangsOnlySkin);
             #endregion
 
             //uncomment this when you have a mastery skin
             #region MasterySkin
-            
+
             ////creating a new skindef as we did before
             //SkinDef masterySkin = Modules.Skins.CreateSkinDef(HENRY_PREFIX + "MASTERY_SKIN_NAME",
             //    assetBundle.LoadAsset<Sprite>("texMasteryAchievement"),
@@ -480,7 +560,7 @@ namespace Swordbot.Survivors.Swordbot
             ////simply find an object on your child locator you want to activate/deactivate and set if you want to activate/deacitvate it with this skin
 
             //skins.Add(masterySkin);
-            
+
             #endregion
 
             skinController.skins = skins.ToArray();
@@ -507,15 +587,17 @@ namespace Swordbot.Survivors.Swordbot
             R2API.RecalculateStatsAPI.GetStatCoefficients += RecalculateStatsAPI_GetStatCoefficients;
         }
 
+
+
         private void RecalculateStatsAPI_GetStatCoefficients(CharacterBody sender, R2API.RecalculateStatsAPI.StatHookEventArgs args)
         {
 
-            if (sender.HasBuff(SwordbotBuffs.armorBuff))
+            if(sender.HasBuff(SwordbotBuffs.armorBuff))
             {
                 args.armorAdd += 300;
             }
         }
 
-      
+
     }
 }

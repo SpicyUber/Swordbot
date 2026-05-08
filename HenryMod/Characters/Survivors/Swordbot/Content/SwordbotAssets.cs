@@ -10,8 +10,14 @@ namespace Swordbot.Survivors.Swordbot
     {
         // particle effects
         public static GameObject swordSwingEffect;
+        public static GameObject swordSwingAirEffect;
         public static GameObject swordHitImpactEffect;
+
         public static GameObject staticEffect, explosionEffect;
+        public static GameObject upSlashEffect, downSlashEffect;
+
+        public static GameObject dashEffect;
+        public static GameObject pokeEffect;
 
         public static GameObject shockwaveExplosionEffect;
 
@@ -41,8 +47,8 @@ namespace Swordbot.Survivors.Swordbot
 
             _assetBundle = assetBundle;
 
-           // swordHitSoundEvent = Content.CreateAndAddNetworkSoundEventDef("HenrySwordHit");
-           CreateSounds();
+            // swordHitSoundEvent = Content.CreateAndAddNetworkSoundEventDef("HenrySwordHit");
+            CreateSounds();
             CreateEffects();
 
             CreateProjectiles();
@@ -54,8 +60,13 @@ namespace Swordbot.Survivors.Swordbot
             CreateShockwaveExplosionEffect();
             staticEffect = _assetBundle.LoadEffect("Static");
             explosionEffect = _assetBundle.LoadEffect("Explosion");
-            swordSwingEffect = _assetBundle.LoadEffect("HenrySwordSwingEffect", true);
+            swordSwingEffect = _assetBundle.LoadEffect("attack1", true);
+            swordSwingAirEffect = _assetBundle.LoadEffect("airattack1", true);
+            dashEffect = _assetBundle.LoadEffect("dash", true);
+            pokeEffect = _assetBundle.LoadEffect("poke", true);
             swordHitImpactEffect = _assetBundle.LoadEffect("ImpactHenrySlash");
+            upSlashEffect = _assetBundle.LoadEffect("upslash",true);
+            downSlashEffect = _assetBundle.LoadEffect("slashdowntrail",true);
         }
 
         private static void CreateSounds()
@@ -74,17 +85,17 @@ namespace Swordbot.Survivors.Swordbot
                 Content.CreateAndAddNetworkSoundEventDef("Play_swing2")
            };
 
-            specialHitSoundEvent = Content.CreateAndAddNetworkSoundEventDef("Play_specialhit");
-            specialSwingSoundEvent = Content.CreateAndAddNetworkSoundEventDef("Play_special");
-            JumpSoundEvent = Content.CreateAndAddNetworkSoundEventDef("Play_jump0");
+            // specialHitSoundEvent = Content.CreateAndAddNetworkSoundEventDef("Play_specialhit");
+            // specialSwingSoundEvent = Content.CreateAndAddNetworkSoundEventDef("Play_special");
+            JumpSoundEvent = Content.CreateAndAddNetworkSoundEventDef("Play_jump");
             DashSoundEvent = Content.CreateAndAddNetworkSoundEventDef("Play_dash");
         }
 
         private static void CreateShockwaveExplosionEffect()
         {
-            shockwaveExplosionEffect = _assetBundle.LoadEffect("Shockwave");
+            shockwaveExplosionEffect = _assetBundle.LoadEffect("slashdownslam");
 
-            if (!shockwaveExplosionEffect)
+            if(!shockwaveExplosionEffect)
                 return;
 
             ShakeEmitter shakeEmitter = shockwaveExplosionEffect.AddComponent<ShakeEmitter>();
@@ -118,7 +129,7 @@ namespace Swordbot.Survivors.Swordbot
             //remove their ProjectileImpactExplosion component and start from default values
             UnityEngine.Object.Destroy(bombProjectilePrefab.GetComponent<ProjectileImpactExplosion>());
             ProjectileImpactExplosion bombImpactExplosion = bombProjectilePrefab.AddComponent<ProjectileImpactExplosion>();
-            
+
             bombImpactExplosion.blastRadius = 16f;
             bombImpactExplosion.blastDamageCoefficient = 1f;
             bombImpactExplosion.falloffModel = BlastAttack.FalloffModel.None;
@@ -131,9 +142,9 @@ namespace Swordbot.Survivors.Swordbot
 
             ProjectileController bombController = bombProjectilePrefab.GetComponent<ProjectileController>();
 
-            if (_assetBundle.LoadAsset<GameObject>("HenryBombGhost") != null)
+            if(_assetBundle.LoadAsset<GameObject>("HenryBombGhost") != null)
                 bombController.ghostPrefab = _assetBundle.CreateProjectileGhostPrefab("HenryBombGhost");
-            
+
             bombController.startSound = "";
         }
         #endregion projectiles

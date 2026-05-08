@@ -43,12 +43,12 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
         {
             base.FixedUpdate();
 
-            if (fixedAge >= fireTime)
+            if(fixedAge >= fireTime)
             {
                 Fire();
             }
 
-            if (fixedAge >= duration && isAuthority)
+            if(fixedAge >= duration && isAuthority)
             {
                 outer.SetNextStateToMain();
                 return;
@@ -57,50 +57,52 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
 
         private void Fire()
         {
-            if (!hasFired)
+            if(!hasFired)
             {
                 hasFired = true;
 
                 characterBody.AddSpreadBloom(1.5f);
                 EffectManager.SimpleMuzzleFlash(EntityStates.Commando.CommandoWeapon.FirePistol2.muzzleEffectPrefab, gameObject, muzzleString, false);
-                Util.PlaySound("Play_snap", gameObject);
+                Util.PlaySound("Play_finger_snap", gameObject);
 
-                if (isAuthority)
-                {   
-                    SwordbotStaticComponent.Consume(gameObject,GetTeam(), damageCoefficient * damageStat);
+                if(isAuthority)
+                {
+                    if(SwordbotStaticComponent.Consume(gameObject, GetTeam(), damageCoefficient * damageStat) > 0)
+                        Util.PlaySound("Play_static_shock", gameObject);
+
                     Ray aimRay = GetAimRay();
                     AddRecoil(-1f * recoil, -2f * recoil, -0.5f * recoil, 0.5f * recoil);
 
-                 /*   new BulletAttack
-                    {
-                        bulletCount = 1,
-                        aimVector = aimRay.direction,
-                        origin = aimRay.origin,
-                        damage = damageCoefficient * damageStat,
-                        damageColorIndex = DamageColorIndex.Default,
-                        damageType = DamageTypeCombo.GenericSecondary,
-                        falloffModel = BulletAttack.FalloffModel.None,
-                        maxDistance = range,
-                        force = force,
-                        hitMask = LayerIndex.CommonMasks.bullet,
-                        minSpread = 0f,
-                        maxSpread = 0f,
-                        isCrit = RollCrit(),
-                        owner = gameObject,
-                        muzzleName = muzzleString,
-                        smartCollision = true,
-                        procChainMask = default,
-                        procCoefficient = procCoefficient,
-                        radius = 0.75f,
-                        sniper = false,
-                        stopperMask = LayerIndex.CommonMasks.bullet,
-                        weapon = null,
-                        tracerEffectPrefab = tracerEffectPrefab,
-                        spreadPitchScale = 1f,
-                        spreadYawScale = 1f,
-                        queryTriggerInteraction = QueryTriggerInteraction.UseGlobal,
-                        hitEffectPrefab = EntityStates.Commando.CommandoWeapon.FirePistol2.hitEffectPrefab,
-                    }.Fire();*/
+                    /*   new BulletAttack
+                       {
+                           bulletCount = 1,
+                           aimVector = aimRay.direction,
+                           origin = aimRay.origin,
+                           damage = damageCoefficient * damageStat,
+                           damageColorIndex = DamageColorIndex.Default,
+                           damageType = DamageTypeCombo.GenericSecondary,
+                           falloffModel = BulletAttack.FalloffModel.None,
+                           maxDistance = range,
+                           force = force,
+                           hitMask = LayerIndex.CommonMasks.bullet,
+                           minSpread = 0f,
+                           maxSpread = 0f,
+                           isCrit = RollCrit(),
+                           owner = gameObject,
+                           muzzleName = muzzleString,
+                           smartCollision = true,
+                           procChainMask = default,
+                           procCoefficient = procCoefficient,
+                           radius = 0.75f,
+                           sniper = false,
+                           stopperMask = LayerIndex.CommonMasks.bullet,
+                           weapon = null,
+                           tracerEffectPrefab = tracerEffectPrefab,
+                           spreadPitchScale = 1f,
+                           spreadYawScale = 1f,
+                           queryTriggerInteraction = QueryTriggerInteraction.UseGlobal,
+                           hitEffectPrefab = EntityStates.Commando.CommandoWeapon.FirePistol2.hitEffectPrefab,
+                       }.Fire();*/
                 }
             }
         }

@@ -50,7 +50,7 @@ namespace SwordbotMod.Characters.Survivors.Swordbot.Components
                 ignoredHealthComponents.Add(hb.healthComponent.GetInstanceID());
                 Debug.Log($"BOOM!{ignoredHealthComponents.Count},{hb.healthComponent.GetInstanceID()},{hb.healthComponent.name}");
                 if(target!=null && target.GetComponent<HurtBox>()!=null && target.GetComponent<HurtBox>().healthComponent.GetInstanceID()!=hb.healthComponent.GetInstanceID())SwordbotStaticComponent.Mark(hb.transform);
-                Util.PlaySound("Play_static", hb.gameObject);
+                
             }
 
             

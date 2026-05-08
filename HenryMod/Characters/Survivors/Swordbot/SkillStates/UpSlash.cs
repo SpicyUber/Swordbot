@@ -21,7 +21,7 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
         float applyMidAttackTimer;
         Vector3 midAttackForce;
         float midAttackDuration;
-        private bool dashUpFlag=true;
+        private bool dashUpFlag = true;
         private int upDirectionNumber;
         private CharacterBody.BodyFlags bodyFlags;
         private bool usedShockwave;
@@ -33,20 +33,20 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
             hitboxGroupName = "SwordGroup";
             hitEnemies = new List<HealthComponent>();
             damageType = DamageTypeCombo.GenericPrimary;
-            damageCoefficient = SwordbotStaticValues.swordDamageCoefficient/12f;
+            damageCoefficient = SwordbotStaticValues.swordDamageCoefficient / 12f;
             procCoefficient = 1f;
             pushForce = 2f;
             duration = 1f;
-             Vector3 dir = characterBody.inputBank.aimDirection;
-                dir.y = 0; dir.Normalize();
-            bonusForce =  dir * 6f+ Vector3.up *40f* upDirectionNumber;
+            Vector3 dir = characterBody.inputBank.aimDirection;
+            dir.y = 0; dir.Normalize();
+            bonusForce = dir * 6f + Vector3.up * 40f * upDirectionNumber;
             Debug.Log("si:" + swingIndex);
             baseDuration = 2f;
             //0-1 multiplier of baseduration, used to time when the hitbox is out (usually based on the run time of the animation)
             //for example, if attackStartPercentTime is 0.5, the attack will start hitting halfway through the ability. if baseduration is 3 seconds, the attack will start happening at 1.5 seconds
             attackStartPercentTime = 0f;
             attackEndPercentTime = 0.4f;
-            
+
             //this is the point at which the attack can be interrupted by itself, continuing a combo
             earlyExitPercentTime = 0.2f;
 
@@ -54,49 +54,59 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
             attackRecoil = 0f;
             hitHopVelocity = 0f;
 
-            swingSoundString = $"Play_special";//"HenrySwordSwing"
-            hitSoundString = $"Play_specialHit";
+            swingSoundString = (characterMotor.isGrounded) ? $"Play_up_swing" : $"Play_down_swing";
+            hitSoundString = $"Play_air_hit0";
 
             midAttackDuration = 0.38f;
-            applyMidAttackInterval  = 0.2f;
+            applyMidAttackInterval = 0.2f;
             applyMidAttackTimer = applyMidAttackInterval;
-           
+
             upSlashMidAttackRange = 25f;
             midAttackForce = bonusForce;
 
-        
             base.OnEnter();
 
             StartAimMode(duration, true);
         }
-     
+
         public override InterruptPriority GetMinimumInterruptPriority()
         {
-            if (stopwatch >= duration * earlyExitPercentTime)
+            if(stopwatch >= duration * earlyExitPercentTime)
             {
                 return InterruptPriority.Any;
             }
             return InterruptPriority.Pain;
         }
+
+        protected override void PlaySwingEffect()
+        {
+            var swingEffects = (upDirectionNumber > 0) ? SwordbotAssets.upSlashEffect : SwordbotAssets.downSlashEffect;
+            var swingMuzzle = (upDirectionNumber > 0) ? "upSlashMuzzle" : "downSlashMuzzle";
+
+            EffectManager.SimpleMuzzleFlash(swingEffects, gameObject, swingMuzzle, true);
+        }
+
         public override void FixedUpdate()
         {
             base.FixedUpdate();
-             
-            if (stopwatch>0.1f && isAuthority && dashUpFlag )
+
+            if(stopwatch > 0.1f && isAuthority && dashUpFlag)
             {
                 PunchAllEnemiesUp();
                 characterBody.bodyFlags |= CharacterBody.BodyFlags.IgnoreFallDamage;
 
                 float upwardForce = 40f;
                 dashUpFlag = false;
-                characterMotor.velocity = Vector3.up * upwardForce* upDirectionNumber;
+                characterMotor.velocity = Vector3.up * upwardForce * upDirectionNumber;
             }
 
-            if (isAuthority && stopwatch < duration*midAttackDuration) {
-               if( upDirectionNumber==1 )characterMotor.Motor.ForceUnground();
+            if(isAuthority && stopwatch < duration * midAttackDuration)
+            {
+                if(upDirectionNumber == 1) characterMotor.Motor.ForceUnground();
                 applyMidAttackTimer -= Time.fixedDeltaTime;
-                if(applyMidAttackTimer <= 0f) {
-                     
+                if(applyMidAttackTimer <= 0f)
+                {
+
                     PunchAllEnemiesUp();
                     applyMidAttackTimer = applyMidAttackInterval;
                 }
@@ -105,16 +115,17 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
             }
 
 
-            if (isAuthority && (fixedAge >= duration || (upDirectionNumber==-1 && characterMotor.isGrounded)))
+            if(isAuthority && (fixedAge >= duration || (upDirectionNumber == -1 && characterMotor.isGrounded)))
             {
-                if (upDirectionNumber == -1)
+                if(upDirectionNumber == -1)
                 {
                     earlyExitPercentTime = 2;
                     Shockwave();
-                    
+
                     outer.SetNextStateToMain();
                 }
-                else { 
+                else
+                {
                     outer.SetNextStateToMain();
                 }
                 return;
@@ -122,47 +133,48 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
         }
         protected override void PlayAttackAnimation()
         {
-            PlayAnimation("Gesture, Override", "Slash" + ((upDirectionNumber==1)? "Up":"Down"), playbackRateParam, duration, 0);
+            PlayAnimation("Gesture, Override", "Slash" + ((upDirectionNumber == 1) ? "Up" : "Down"), playbackRateParam, duration, 0);
         }
         private void Shockwave()
-        {  if(usedShockwave) return; usedShockwave = true;
+        {
+            if(usedShockwave) return; usedShockwave = true;
             Debug.Log("Shockwave");
-            var colliders =Physics.OverlapSphere(characterBody.transform.position,10f);
+            var colliders = Physics.OverlapSphere(characterBody.transform.position, 10f);
             List<HealthComponent> healthComponents = new List<HealthComponent>();
-            foreach (var collider in colliders)
+            foreach(var collider in colliders)
             {
                 var hc = collider.GetComponent<HealthComponent>();
-                if (hc != null) { healthComponents.Add(hc);  }
+                if(hc != null) { healthComponents.Add(hc); }
             }
             int hitCount = 0;
-            foreach (HealthComponent enemy in healthComponents)
+            foreach(HealthComponent enemy in healthComponents)
             {
-                if (enemy == null || characterBody == null || Vector3.Distance(enemy.transform.position, characterBody.transform.position) > upSlashMidAttackRange) continue;
+                if(enemy == null || characterBody == null || Vector3.Distance(enemy.transform.position, characterBody.transform.position) > upSlashMidAttackRange) continue;
                 Vector3 dir = characterBody.inputBank.aimDirection;
                 dir.y = 0; dir.Normalize();
-                midAttackForce = dir * 350f + Vector3.up * 2000f ;
+                midAttackForce = dir * 350f + Vector3.up * 2000f;
                 Debug.Log("ATTEMPTING Shockwave ENEMY!" + enemy.name);
-                if(enemy && enemy.body.teamComponent.teamIndex != characterBody.teamComponent.teamIndex) {
+                if(enemy && enemy.body.teamComponent.teamIndex != characterBody.teamComponent.teamIndex)
+                {
                     SwordbotStaticComponent.Mark(enemy);
                     hitCount++;
                     Vector3 aimDir = characterBody.inputBank.aimDirection;
                     aimDir.y = Mathf.Clamp(aimDir.y, 0.2f, 1);
                     aimDir.Normalize();
-                enemy.TakeDamage(new DamageInfo() {attacker=gameObject,  inflictor = gameObject, procCoefficient = 1, damageType = damageType, damage = attack.damage*10f, position = characterBody.transform.position, force = aimDir*6000f, physForceFlags = PhysForceFlags.ignoreGroundStick, canRejectForce = false  });
+                    enemy.TakeDamage(new DamageInfo() { attacker = gameObject, inflictor = gameObject, procCoefficient = 1, damageType = damageType, damage = attack.damage * 10f, position = characterBody.transform.position, force = aimDir * 6000f, physForceFlags = PhysForceFlags.ignoreGroundStick, canRejectForce = false });
                 }
 
 
             }
-            if(hitCount>0)
-            Util.PlaySound($"Play_attack{2}", gameObject);
-            Util.PlaySound($"Play_swing{2}", gameObject);
-            Util.PlaySound("Play_landing", gameObject);
+            if(hitCount > 0)
+                Util.PlaySound($"Play_air_hit1", gameObject);
+            Util.PlaySound("Play_slam", gameObject);
             PlayAnimation("Gesture, Override", "Slam");
-            EffectManager.SimpleImpactEffect(SwordbotAssets.shockwaveExplosionEffect,characterBody.transform.position, characterDirection.forward, true);
+            EffectManager.SimpleImpactEffect(SwordbotAssets.shockwaveExplosionEffect, characterBody.transform.position, characterDirection.forward, true);
             characterBody.characterMotor.velocity = Vector3.zero;
-            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f,12);
-            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f,12);
-            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f,12);
+            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f, 12);
+            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f, 12);
+            characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f, 12);
             characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f, 12);
             characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f, 12);
             characterBody.AddTimedBuff(RoR2Content.Buffs.Slow50, 0.6f, 12);
@@ -177,7 +189,9 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
 
         protected void PunchAllEnemiesUp()
         {
-            for (int i=0;i< hitEnemies.Count;i++)
+            int i = 0;
+
+            for(i = 0; i < hitEnemies.Count; i++)
             {
                 var enemy = hitEnemies[i];
                 var characterToEnemyFlattened = (enemy.transform.position - characterBody.transform.position);
@@ -186,41 +200,43 @@ namespace Swordbot.Survivors.Swordbot.SkillStates
                 var aimDirectionFlattened = characterBody.inputBank.aimDirection;
                 aimDirectionFlattened.y = 0;
                 aimDirectionFlattened.Normalize();
-                if (Vector3.Dot((enemy.transform.position - characterBody.transform.position).normalized, characterBody.inputBank.aimDirection) < -0.2f) { hitEnemies.RemoveAt(i); i--; continue; }
-                if ( enemy == null || enemy.body.isBoss || enemy.body.isBoss || characterBody == null || Vector3.Distance(enemy.transform.position, characterBody.transform.position) > upSlashMidAttackRange) continue;
+                if(Vector3.Dot((enemy.transform.position - characterBody.transform.position).normalized, characterBody.inputBank.aimDirection) < -0.2f) { hitEnemies.RemoveAt(i); i--; continue; }
+                if(enemy == null || enemy.body.isBoss || enemy.body.isBoss || characterBody == null || Vector3.Distance(enemy.transform.position, characterBody.transform.position) > upSlashMidAttackRange) continue;
                 Vector3 dir = characterBody.inputBank.aimDirection;
                 dir.y = 0; dir.Normalize();
-                midAttackForce = ((characterBody.transform.position - enemy.transform.position) + 2*dir) + Vector3.up * Mathf.Max(0,((midAttackDuration-stopwatch)/midAttackDuration))* 35f* upDirectionNumber* ((upDirectionNumber < 0) ? 3 : 1);
-                
+                midAttackForce = ((characterBody.transform.position - enemy.transform.position) + 2 * dir) + Vector3.up * Mathf.Max(0, ((midAttackDuration - stopwatch) / midAttackDuration)) * 35f * upDirectionNumber * ((upDirectionNumber < 0) ? 3 : 1);
+
                 Debug.Log("ATTEMPTING PUNCH UP ENEMY!" + enemy.name);
-                 
-                enemy.TakeDamage(new DamageInfo() {attacker=gameObject, inflictor = gameObject, procCoefficient = 1, damageType = damageType, damage = attack.damage, position = characterBody.transform.position, force = midAttackForce, physForceFlags = PhysForceFlags.massIsOne, canRejectForce = false });
+
+                enemy.TakeDamage(new DamageInfo() { attacker = gameObject, inflictor = gameObject, procCoefficient = 1, damageType = damageType, damage = attack.damage, position = characterBody.transform.position, force = midAttackForce, physForceFlags = PhysForceFlags.massIsOne, canRejectForce = false });
                 SwordbotStaticComponent.Mark(enemy);
-                Util.PlaySound(hitSoundString, enemy.gameObject);
+
 
 
             }
 
+            if(i > 0)
+                Util.PlaySound(hitSoundString, gameObject);
 
 
         }
         protected override void OnHitEnemyAuthority()
         {
-             
-            
+
+
             base.OnHitEnemyAuthority();
         }
 
         protected override void ModifyHitHurtBoxes(List<HurtBox> hurtBoxes)
         {
-            foreach (HurtBox box in hurtBoxes) { TryAddEnemyHC(box.healthComponent); }
+            foreach(HurtBox box in hurtBoxes) { TryAddEnemyHC(box.healthComponent); }
             base.ModifyHitHurtBoxes(hurtBoxes);
         }
 
         private void TryAddEnemyHC(HealthComponent healthComponent)
         {
-            if (healthComponent == null) { Debug.Log("cant add null"); return; }
-            if (hitEnemies.Exists((HealthComponent hc) => { return hc.GetInstanceID() == healthComponent.GetInstanceID(); })) return;
+            if(healthComponent == null) { Debug.Log("cant add null"); return; }
+            if(hitEnemies.Exists((HealthComponent hc) => { return hc.GetInstanceID() == healthComponent.GetInstanceID(); })) return;
             hitEnemies.Add(healthComponent);
             Debug.Log("ADDED" + healthComponent);
         }

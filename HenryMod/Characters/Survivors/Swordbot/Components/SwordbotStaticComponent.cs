@@ -63,8 +63,10 @@ namespace Swordbot.Survivors.Swordbot.Components
             }
         }
 
-       public static void Consume(GameObject gameObject, TeamIndex team, float damage)
+       public static int Consume(GameObject gameObject, TeamIndex team, float damage)
         {
+            int markCount = staticMarks.Count;
+
             for (int i = staticMarks.Count - 1; i >= 0; i--)
             {
              StaticMark mark = staticMarks[i]; mark.timeToLive--; mark.Consume(gameObject,team, damage);  staticMarks.Remove(mark);
@@ -72,6 +74,7 @@ namespace Swordbot.Survivors.Swordbot.Components
                
 
             }
+            return markCount;
         }
 
 

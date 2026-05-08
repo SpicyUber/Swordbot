@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 169380588155230482}
   - component: {fileID: 169380588155230483}
   m_Layer: 0
-  m_Name: slash down slam
+  m_Name: slashdownslam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
